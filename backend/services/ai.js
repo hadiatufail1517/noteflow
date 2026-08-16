@@ -38,7 +38,7 @@ async function generateSummary(content) {
   if (!content || !content.trim()) return 'No content to summarize.';
 
   const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({ model: 'gemini-flash-latest' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-3.1-flash-lite' });
   const prompt = `Provide a concise, professional summary of the following note content. Use markdown styling. Return only the summary text.\n\nNote:\n${content}`;
   
   const result = await model.generateContent(prompt);
@@ -52,7 +52,7 @@ async function improveWriting(content) {
   if (!content || !content.trim()) return 'No content to improve.';
 
   const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({ model: 'gemini-flash-latest' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-3.1-flash-lite' });
   const prompt = `Improve the grammar, structure, readability, and clarity of the following text. Preserve the original message and meaning. Return ONLY the improved text version. Do not add conversational intros or descriptions.\n\nText:\n${content}`;
   
   const result = await model.generateContent(prompt);
@@ -66,7 +66,7 @@ async function generateTags(content) {
   if (!content || !content.trim()) return [];
 
   const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({ model: 'gemini-flash-latest' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-3.1-flash-lite' });
   const prompt = `Analyze the note below and suggest 3 to 6 tags that represent its core topics. Return the tags as a single line, comma-separated list of short words (e.g. 'React, JavaScript, Component'). Return ONLY the list. Do not write explanation.\n\nNote:\n${content}`;
   
   try {
@@ -86,7 +86,7 @@ async function extractActionItems(content) {
   if (!content || !content.trim()) return 'No content to parse.';
 
   const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({ model: 'gemini-flash-latest' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-3.1-flash-lite' });
   const prompt = `Analyze the note text below and extract any actionable tasks or items that need completion. Return them as a markdown checklist (using - [ ] syntax). If no actionable tasks are found, output 'No action items found.'\n\nText:\n${content}`;
   
   const result = await model.generateContent(prompt);
@@ -99,7 +99,7 @@ async function askNoteQuestion(noteTitle, noteContent, question) {
   if (!apiKey) return 'Please set your LLM_API_KEY in the env settings.';
   
   const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({ model: 'gemini-flash-latest' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-3.1-flash-lite' });
   const prompt = `You are a helpful AI assistant. Answer the user's question about their note based ONLY on the note content provided below. If you cannot answer based on the note content, say so. Do not invent details.
   
 Note Title: ${noteTitle}
@@ -581,7 +581,7 @@ DELETIVE ACTIONS:
 
   // Start chat model
   const chatModel = genAI.getGenerativeModel({
-    model: 'gemini-flash-latest',
+    model: 'gemini-3.1-flash-lite',
     tools,
     systemInstruction
   });
@@ -915,7 +915,7 @@ async function generateDailyBrief(userId, preparePlan = false) {
     } else {
       try {
         const genAI = new GoogleGenerativeAI(apiKey);
-        const model = genAI.getGenerativeModel({ model: 'gemini-flash-latest' });
+        const model = genAI.getGenerativeModel({ model: 'gemini-3.1-flash-lite' });
 
         const notesContext = allNotes.slice(0, 10).map(n => `- ${n.title} (${n.category})`).join('\n');
         const tasksContext = unfinishedTasks.slice(0, 15).map(t => `- [ ] ${t.text} (from note "${t.noteTitle}")`).join('\n');
@@ -967,7 +967,7 @@ async function generateMCQs(content) {
   if (!content || !content.trim()) return [];
 
   const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({ model: 'gemini-flash-latest' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-3.1-flash-lite' });
   const prompt = `Based on the following note content, generate 4-5 multiple choice questions (MCQs) for self-study.
 Format the output as a valid JSON array of objects. Each object MUST have these keys:
 - "question": the question string
@@ -1000,7 +1000,7 @@ async function generateQuiz(content) {
   if (!content || !content.trim()) return [];
 
   const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({ model: 'gemini-flash-latest' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-3.1-flash-lite' });
   const prompt = `Based on the following note content, generate a quiz consisting of 4-5 interactive multiple choice questions.
 Format the output as a valid JSON array of objects. Each object MUST have these keys:
 - "question": the question string

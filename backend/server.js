@@ -19,8 +19,21 @@ const eventsController = require('./controllers/events');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Enable CORS and body parsers
-app.use(cors());
+const allowedOrigins = [
+  'https://noteflow-puce.vercel.app',
+  'http://localhost:3000'
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+}));
 app.use(express.json());
 
 // Log incoming API calls

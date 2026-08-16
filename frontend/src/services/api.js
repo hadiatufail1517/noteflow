@@ -9,7 +9,24 @@
 import axios from 'axios';
 import { LS } from '../utils/localStorage';
 
-const BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+let tempApiUrl = 'http://localhost:5000/api';
+try {
+  if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_URL) {
+    tempApiUrl = import.meta.env.VITE_API_URL;
+  } else if (process.env && process.env.REACT_APP_API_URL) {
+    tempApiUrl = process.env.REACT_APP_API_URL;
+  }
+} catch (e) {
+  if (process.env && process.env.REACT_APP_API_URL) {
+    tempApiUrl = process.env.REACT_APP_API_URL;
+  }
+}
+
+if (tempApiUrl && !tempApiUrl.endsWith('/api') && !tempApiUrl.endsWith('/api/')) {
+  tempApiUrl = tempApiUrl.endsWith('/') ? `${tempApiUrl}api` : `${tempApiUrl}/api`;
+}
+
+const BASE_URL = tempApiUrl;
 
 // Create central Axios instance
 const api = axios.create({
