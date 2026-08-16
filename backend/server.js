@@ -122,6 +122,27 @@ const syncDb = async () => {
     await sequelize.sync({ alter: true });
     await sequelize.query('PRAGMA foreign_keys = ON;');
     console.log('Database schemas synced successfully.');
+
+    // Safely drop legacy Postgres constraints if running in production
+    if (sequelize.options.dialect !== 'sqlite') {
+      try {
+        await sequelize.query('ALTER TABLE "FriendRequests" DROP CONSTRAINT IF EXISTS "FriendRequests_senderId_key";');
+        await sequelize.query('ALTER TABLE "FriendRequests" DROP CONSTRAINT IF EXISTS "FriendRequests_senderid_key";');
+        await sequelize.query('ALTER TABLE "FriendRequests" DROP CONSTRAINT IF EXISTS "FriendRequests_receiverId_key";');
+        await sequelize.query('ALTER TABLE "FriendRequests" DROP CONSTRAINT IF EXISTS "FriendRequests_receiverid_key";');
+        await sequelize.query('ALTER TABLE "Friendships" DROP CONSTRAINT IF EXISTS "Friendships_userId_key";');
+        await sequelize.query('ALTER TABLE "Friendships" DROP CONSTRAINT IF EXISTS "Friendships_userid_key";');
+        await sequelize.query('ALTER TABLE "Friendships" DROP CONSTRAINT IF EXISTS "Friendships_friendId_key";');
+        await sequelize.query('ALTER TABLE "Friendships" DROP CONSTRAINT IF EXISTS "Friendships_friendid_key";');
+        await sequelize.query('ALTER TABLE "NoteShares" DROP CONSTRAINT IF EXISTS "NoteShares_sharedWithUserId_key";');
+        await sequelize.query('ALTER TABLE "NoteShares" DROP CONSTRAINT IF EXISTS "NoteShares_sharedwithuserid_key";');
+        await sequelize.query('ALTER TABLE "NoteShares" DROP CONSTRAINT IF EXISTS "NoteShares_noteId_key";');
+        await sequelize.query('ALTER TABLE "NoteShares" DROP CONSTRAINT IF EXISTS "NoteShares_noteid_key";');
+        console.log('Production unique constraints sanitized successfully.');
+      } catch (dbErr) {
+        console.warn('Postgres constraint sanitization warning:', dbErr.message);
+      }
+    }
     
     app.listen(PORT, () => {
       console.log(`Server successfully started on port ${PORT}`);

@@ -158,13 +158,35 @@ exports.sendRequest = async (req, res) => {
     const existingRequest = await FriendRequest.findOne({
       where: {
         [Op.or]: [
-          { senderId, receiverId, status: 'pending' },
-          { senderId: receiverId, receiverId: senderId, status: 'pending' }
+          { senderId, receiverId },
+          { senderId: receiverId, receiverId: senderId }
         ]
       }
     });
+
     if (existingRequest) {
-      return res.status(400).json({ message: 'A pending friend request already exists.' });
+      if (existingRequest.status === 'pending') {
+        return res.status(400).json({ message: 'A pending friend request already exists.' });
+      }
+      if (existingRequest.status === 'accepted') {
+        return res.status(400).json({ message: 'You are already friends with this user.' });
+      }
+      if (existingRequest.status === 'rejected') {
+        existingRequest.senderId = senderId;
+        existingRequest.receiverId = receiverId;
+        existingRequest.status = 'pending';
+        await existingRequest.save();
+
+        const sender = await User.findByPk(senderId);
+        await Notification.create({
+          userId: receiverId,
+          type: 'friend_request',
+          title: 'New Friend Request 👥',
+          content: `${sender.name} sent you a friend request.`
+        });
+
+        return res.status(200).json({ message: 'Friend request sent.', request: existingRequest });
+      }
     }
 
     const request = await FriendRequest.create({
