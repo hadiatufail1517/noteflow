@@ -205,6 +205,7 @@ exports.sendRequest = async (req, res) => {
 
     res.status(201).json({ message: 'Friend request sent.', request });
   } catch (err) {
+    console.error("sendRequest error details:", err);
     res.status(500).json({ message: err.message });
   }
 };

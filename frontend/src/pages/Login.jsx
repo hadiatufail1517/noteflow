@@ -10,9 +10,14 @@ function Login() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async () => {
-    const emailVal = (email || document.getElementById('email')?.value || '').trim().toLowerCase();
-    const passwordVal = password || document.getElementById('password')?.value || '';
+  const handleSubmit = async (e) => {
+    if (e) e.preventDefault();
+    
+    // Fallback: extract latest values directly from the input elements to reliably handle browser autofill
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const emailVal = (emailInput?.value || email || '').trim();
+    const passwordVal = passwordInput?.value || password || '';
 
     if (!emailVal || !passwordVal) {
       setError('Please fill in all fields');
@@ -30,6 +35,7 @@ function Login() {
     }
   };
 
+  // eslint-disable-next-line no-unused-vars
   const fillDemo = () => {
     setEmail('demo@noteflow.app');
     setPassword('demo123');
@@ -52,17 +58,18 @@ function Login() {
 
         {error && <div className="auth-error">⚠️ {error}</div>}
 
-        <div className="auth-form">
+        <form className="auth-form" onSubmit={handleSubmit}>
           <div className="form-group">
             <label className="form-label" htmlFor="email">Email</label>
             <input
               id="email"
+              name="email"
               className="form-input"
               type="email"
               placeholder="your@email.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
+              autoComplete="email"
               autoFocus
             />
           </div>
@@ -71,19 +78,20 @@ function Login() {
             <label className="form-label" htmlFor="password">Password</label>
             <input
               id="password"
+              name="password"
               className="form-input"
               type="password"
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
+              autoComplete="current-password"
             />
           </div>
 
-          <button className="auth-btn" onClick={handleSubmit} disabled={loading}>
+          <button className="auth-btn" type="submit" disabled={loading}>
             {loading ? 'Signing in...' : 'Sign In →'}
           </button>
-        </div>
+        </form>
 
         <div className="auth-switch">
           Don't have an account?{' '}
