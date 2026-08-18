@@ -11,14 +11,17 @@ function Login() {
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
-    if (!email || !password) {
+    const emailVal = (email || document.getElementById('email')?.value || '').trim().toLowerCase();
+    const passwordVal = password || document.getElementById('password')?.value || '';
+
+    if (!emailVal || !passwordVal) {
       setError('Please fill in all fields');
       return;
     }
     setLoading(true);
     setError('');
     try {
-      await login(email, password);
+      await login(emailVal, passwordVal);
       navigate('/dashboard');
     } catch (e) {
       setError(e.response?.data?.message || e.message);

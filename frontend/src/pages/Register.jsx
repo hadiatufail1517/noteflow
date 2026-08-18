@@ -12,18 +12,22 @@ function Register() {
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
-    if (!name || !email || !password) {
+    const nameVal = (name || document.getElementById('name')?.value || '').trim();
+    const emailVal = (email || document.getElementById('email')?.value || '').trim().toLowerCase();
+    const passwordVal = password || document.getElementById('password')?.value || '';
+
+    if (!nameVal || !emailVal || !passwordVal) {
       setError('Please fill in all fields');
       return;
     }
-    if (password.length < 6) {
+    if (passwordVal.length < 6) {
       setError('Password must be at least 6 characters');
       return;
     }
     setLoading(true);
     setError('');
     try {
-      await register(name, email, password);
+      await register(nameVal, emailVal, passwordVal);
       navigate('/dashboard');
     } catch (e) {
       setError(e.response?.data?.message || e.message);

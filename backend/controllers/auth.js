@@ -6,13 +6,14 @@ require('dotenv').config();
 const AUTH_SECRET = process.env.AUTH_SECRET || 'fallback_secret_for_development_purposes';
 
 exports.register = async (req, res) => {
-  const { name, email, password } = req.body;
+  let { name, email, password } = req.body;
   
   if (!name || !email || !password) {
     return res.status(400).json({ message: 'Please enter all fields' });
   }
 
   try {
+    email = email.trim().toLowerCase();
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
       return res.status(400).json({ message: 'User already exists' });
@@ -69,13 +70,14 @@ exports.register = async (req, res) => {
 };
 
 exports.login = async (req, res) => {
-  const { email, password } = req.body;
+  let { email, password } = req.body;
 
   if (!email || !password) {
     return res.status(400).json({ message: 'Please enter all fields' });
   }
 
   try {
+    email = email.trim().toLowerCase();
     const user = await User.findOne({ where: { email } });
     if (!user) {
       return res.status(400).json({ message: 'Invalid email or password' });
