@@ -21,7 +21,7 @@ function Login() {
       await login(email, password);
       navigate('/dashboard');
     } catch (e) {
-      setError(e.message);
+      setError(e.response?.data?.message || e.message);
     } finally {
       setLoading(false);
     }
